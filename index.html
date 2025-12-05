@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lady of All Nations Pharmacy</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ---------- Color & base ---------- */
+    :root{
+      --primary:#005bbb; /* main blue */
+      --primary-600:#0046a1;
+      --accent:#0077ff;
+      --muted: rgba(11,23,34,0.55);
+      --light:#f8f9fa;
+      --bg:#ffffff;
+      --card:#ffffff;
+      --text:#0b1724;
+      --glass: rgba(255,255,255,0.6);
+      --radius:14px;
+      --shadow: 0 18px 40px rgba(6,22,40,0.08);
+    }
+    [data-theme='dark']{
+      --bg:#071022;
+      --text:#e6eef6;
+      --light:#071427;
+      --card:#081426;
+      --muted: rgba(255,255,255,0.65);
+      --glass: rgba(255,255,255,0.04);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;line-height:1.5;margin:0}
+
+    /* ---------- Accessibility: skip link ---------- */
+    .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+    .skip-link:focus{left:10px;top:10px;width:auto;height:auto;padding:8px 12px;background:#000;color:#fff;border-radius:6px;z-index:9999}
+
+    /* ---------- Navbar ---------- */
+    .navbar{backdrop-filter: blur(6px);background:linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.72));}
+    [data-theme='dark'] .navbar{background:linear-gradient(180deg, rgba(8,20,36,0.85), rgba(8,20,36,0.6));}
+    .navbar-brand{letter-spacing:0.2px}
+    .nav-link{color:var(--text)!important}
+    .nav-link:focus,.nav-link:hover{color:var(--primary)!important}
+    .btn-pill{border-radius:999px}
+    .topbar{background:linear-gradient(90deg, rgba(0,91,187,0.06), rgba(0,91,187,0.02));font-size:.9rem;padding:.35rem 0}
+
+    /* ---------- Hero ---------- */
+    .hero{background:linear-gradient(0deg, rgba(0,91,187,0.86), rgba(0,91,187,0.78)), url('https://images.unsplash.com/photo-1580281657527-47a6c2b78e02?auto=format&fit=crop&w=1400&q=80') center/cover no-repeat; color:white; padding:96px 0 84px; text-shadow:0 6px 30px rgba(2,10,24,0.45)}
+    .hero h1{font-weight:700;letter-spacing:0.3px}
+    .hero p.lead{opacity:0.98}
+    .hero .btn{border-radius:12px;padding:0.75rem 1.2rem;font-weight:600}
+    .hero-cta{display:flex;gap:12px;justify-content:center}
+
+    /* subtle floating animation */
+    .float-up{transform:translateY(6px);transition:transform .6s ease}
+    .float-up.in-view{transform:translateY(0)}
+
+    /* ---------- Controls ---------- */
+    .product-controls{display:flex;gap:10px;align-items:center}
+    .search-input{min-width:220px;max-width:420px}
+
+    /* ---------- Cards ---------- */
+    .card{background:var(--card);border-radius:var(--radius);border:0}
+    .card.product-card{transition:transform .28s cubic-bezier(.2,.9,.3,1),box-shadow .28s}
+    .card.product-card:hover{transform:translateY(-12px);box-shadow:0 40px 80px rgba(6,22,40,0.12)}
+    .card-img-top{border-top-left-radius:var(--radius);border-top-right-radius:var(--radius);max-height:220px;object-fit:cover}
+    .card-body{padding:1rem}
+    .badge-pill{border-radius:999px;padding:.35rem .6rem;font-weight:600}
+
+    /* ---------- Category card ---------- */
+    .category-title{font-size:1.05rem;font-weight:700;color:var(--primary);}    
+    .card.p-3{border-radius:12px}
+
+    /* ---------- Map ---------- */
+    .map-wrap{border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+
+    /* ---------- Toast ---------- */
+    .toast-welcome{position:fixed;right:20px;bottom:20px;z-index:1080}
+
+    /* ---------- Forms & modals ---------- */
+    .modal-content{border-radius:12px}
+    .form-control:focus{box-shadow:0 0 0 0.18rem rgba(0,91,187,0.14);border-color:var(--primary)}
+    .btn-close{opacity:0.8}
+
+    /* ---------- Footer ---------- */
+    footer{background:linear-gradient(180deg,#06132a,#041022);color:#fff}
+    footer a{color:rgba(255,255,255,0.9)}
+
+    /* ---------- Floating cart FAB ---------- */
+    .fab-cart{position:fixed;right:22px;bottom:22px;z-index:1085;border-radius:999px;padding:12px 14px;background:var(--primary);color:#fff;box-shadow:0 10px 30px rgba(3,27,64,0.28);border:0}
+    .fab-cart .count{background:rgba(255,255,255,0.12);padding:4px 7px;border-radius:999px;margin-left:8px;font-weight:700}
+
+    /* ---------- Focus outlines ---------- */
+    :focus{outline:4px solid rgba(0,91,187,0.12);outline-offset:2px}
+
+    /* ---------- Responsive tweaks ---------- */
+    @media (max-width:991px){
+      .hero{padding:80px 0 64px}
+    }
+    @media (max-width:767px){
+      .hero{padding:70px 0}
+      .card-img-top{max-height:180px}
+      .product-controls{flex-direction:column;align-items:stretch}
+      .fab-cart{right:14px;bottom:14px}
+    }
+  </style>
+</head>
+<body data-theme="light">
+
+  <a class="skip-link" href="#productGrid">Skip to products</a>
+  <div class="topbar text-muted small"><div class="container d-flex justify-content-between"><div>Cordova, Cebu &nbsp;•&nbsp; (032) 239-5016</div><div>Plus Code: 7X32+33 Cordova, Cebu</div></div></div>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top shadow-sm" style="top:32px;">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <img src="../ccc/images/caduceus-symbol.png" alt="logo" style="width:44px;height:44px;border-radius:10px;margin-right:12px"> 
+      <span class="fw-bold">Lady of All Nations</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-lg-center">
+        <li class="nav-item"><a class="nav-link" href="#products">Products</a></li>
+        <li class="nav-item"><a class="nav-link" href="#how">How We Work</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        <li class="nav-item d-none d-lg-block ms-3"><button id="themeBtn" class="btn btn-outline-secondary btn-sm" title="Toggle theme">🌙</button></li>
+        <li class="nav-item ms-3" id="authButtons">
+          <a href="#" class="btn btn-outline-success btn-pill btn-sm me-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
+          <a href="#" class="btn btn-pill btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</a>
+        </li>
+        <li class="nav-item ms-2 d-none" id="userPanel">
+          <span class="me-2" id="welcomeText"></span>
+          <button class="btn btn-outline-danger btn-sm btn-pill" id="logoutBtn">Logout</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- Hero -->
+  <section class="hero text-center">
+    <div class="container">
+      <h1 class="display-5 fw-bold float-up">Your trusted community pharmacy in Cebu</h1>
+      <p class="lead muted float-up" style="transition-delay:.08s">Medicine, vitamins, and everyday essentials — checked for quality and ready when you need them.</p>
+      <div class="hero-cta mt-3 float-up" style="transition-delay:.16s">
+        <a href="#products" class="btn btn-light btn-lg text-primary">Browse Products</a>
+        <a href="#contact" class="btn btn-outline-light btn-lg">Contact Us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products with categories and small subitems -->
+  <section id="products" class="py-5">
+    <div class="container">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-4 gap-3">
+        <div>
+          <h2 class="mb-0">Our Products</h2>
+          <p class="muted small mb-0">Handpicked essentials for health & home</p>
+        </div>
+        <div class="product-controls ms-auto">
+          <div class="input-group search-input">
+            <span class="input-group-text" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16"><path d="M11 6a5 5 0 1 1-10 0 5 5 0 0 1 10 0z"/><path d="M10.344 10.344a6 6 0 1 1 .707-.707l3.182 3.182-.707.707-3.182-3.182z"/></svg></span>
+            <input id="productSearch" type="text" class="form-control" placeholder="Search products..." aria-label="Search products">
+          </div>
+          <div class="btn-group ms-2" role="group" aria-label="Filter">
+            <button class="btn btn-outline-secondary btn-sm active" data-filter="all">All</button>
+            <button class="btn btn-outline-secondary btn-sm" data-filter="medicine">Medicines</button>
+            <button class="btn btn-outline-secondary btn-sm" data-filter="vitamins">Vitamins</button>
+            <button class="btn btn-outline-secondary btn-sm" data-filter="firstaid">First Aid</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4" id="productGrid">
+        <div class="col-lg-9">
+
+          <!-- Grid of featured items -->
+          <div class="row g-3" id="cardsRow">
+            <!-- product card (data-category used for filtering) -->
+            <div class="col-md-4 product-item" data-category="medicine">
+              <div class="card product-card h-100">
+                <img src="../ccc/images/paramed.webp" class="card-img-top" alt="Paracetamol" loading="lazy">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">Paracetamol</h5>
+                    <span class="badge bg-primary badge-pill">₱10</span>
+                  </div>
+                  <p class="card-text muted">Pain & fever relief • ₱10 / tablet</p>
+                  <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-outline-primary btn-sm detailsBtn">Details</button>
+                    <button class="btn btn-primary btn-sm addToCart">Add to Cart</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4 product-item" data-category="vitamins">
+              <div class="card product-card h-100">
+                <img src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=60" class="card-img-top" alt="Vitamin C" loading="lazy">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">Vitamin C</h5>
+                    <span class="badge bg-primary badge-pill">₱120</span>
+                  </div>
+                  <p class="card-text muted">Immunity support • ₱120 / bottle</p>
+                  <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-outline-primary btn-sm detailsBtn">Details</button>
+                    <button class="btn btn-primary btn-sm addToCart">Add to Cart</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4 product-item" data-category="firstaid">
+              <div class="card product-card h-100">
+                <img src="../ccc/images/alcohol70.jpg" class="card-img-top" alt="Alcohol 70%" loading="lazy">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">Alcohol 70%</h5>
+                    <span class="badge bg-primary badge-pill">₱150</span>
+                  </div>
+                  <p class="card-text muted">Sanitizer • 500ml</p>
+                  <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-outline-primary btn-sm detailsBtn">Details</button>
+                    <button class="btn btn-primary btn-sm addToCart">Add to Cart</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4 product-item" data-category="medicine">
+              <div class="card product-card h-100">
+                <img src="../ccc/images/coughsyrup.jpg" class="card-img-top" alt="Cough Syrup" loading="lazy">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">Cough Syrup</h5>
+                    <span class="badge bg-primary badge-pill">₱120</span>
+                  </div>
+                  <p class="card-text muted">Relief for cough & sore throat</p>
+                  <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-outline-primary btn-sm detailsBtn">Details</button>
+                    <button class="btn btn-primary btn-sm addToCart">Add to Cart</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4 product-item" data-category="medicine">
+              <div class="card product-card h-100">
+                <img src="../ccc/images/ibroprufen.jpg" class="card-img-top" alt="Ibuprofen" loading="lazy">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">Ibuprofen</h5>
+                    <span class="badge bg-primary badge-pill">₱80</span>
+                  </div>
+                  <p class="card-text muted">Anti-inflammatory • 200mg</p>
+                  <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-outline-primary btn-sm detailsBtn">Details</button>
+                    <button class="btn btn-primary btn-sm addToCart">Add to Cart</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4 product-item" data-category="vitamins">
+              <div class="card product-card h-100">
+                <img src="../ccc/images/multivitamin.jpg" class="card-img-top" alt="Multivitamins" loading="lazy">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h5 class="card-title mb-0">Multivitamins</h5>
+                    <span class="badge bg-primary badge-pill">₱250</span>
+                  </div>
+                  <p class="card-text muted">Daily supplements</p>
+                  <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-outline-primary btn-sm detailsBtn">Details</button>
+                    <button class="btn btn-primary btn-sm addToCart">Add to Cart</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Categories / subitems -->
+        <div class="col-lg-3">
+          <div class="card p-3">
+            <h6 class="category-title mb-2">Medicines</h6>
+            <ul class="small">
+              <li>Paracetamol • Ibuprofen • Mefenamic Acid</li>
+              <li>Cough Syrup • Cetirizine</li>
+            </ul>
+            <hr>
+            <h6 class="category-title mb-2">Vitamins & Supplements</h6>
+            <ul class="small">
+              <li>Vitamin C • Multivitamins • Fish Oil</li>
+            </ul>
+            <hr>
+            <h6 class="category-title mb-2">First Aid</h6>
+            <ul class="small">
+              <li>Bandages • Antiseptic • Rubbing Alcohol</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- How we work -->
+  <section id="how" class="py-5 bg-light">
+    <div class="container">
+      <h3>How We Work</h3>
+      <div class="row mt-3">
+        <div class="col-md-4">
+          <div class="p-3">
+            <h5>Quality Checked</h5>
+            <p class="muted">All medicines and supplies are sourced and checked for quality.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3">
+            <h5>Fast Service</h5>
+            <p class="muted">Quick in-store pickup and responsive customer support.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3">
+            <h5>Community Care</h5>
+            <p class="muted">Support for local residents and senior citizens.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact & Map -->
+  <section id="contact" class="py-5">
+    <div class="container">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-6">
+          <h4>Contact Us</h4>
+          <p class="mb-1"><strong>Address:</strong> Cordova, Cebu</p>
+          <p class="mb-1"><strong>Phone:</strong> (032) 239-5016</p>
+          <p class="mb-1"><strong>Plus Code:</strong> 7X32+33 Cordova, Cebu</p>
+          <p class="mt-3"><a class="btn btn-outline-primary btn-sm" href="tel:+63322395016">Call (032) 239-5016</a>
+            <a class="btn btn-primary btn-sm ms-2" href="#contact">Get Directions</a></p>
+        </div>
+        <div class="col-md-6">
+          <div class="map-wrap">
+            <iframe src="https://www.google.com/maps?q=7X32%2B33%20Cordova%2C%20Cebu&amp;output=embed" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="py-4 bg-dark text-white text-center">
+  <div class="container">
+    <small>© 2025 Lady of All Nations Pharmacy • All Rights Reserved</small>
+  </div>
+</footer>
+
+<!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Login</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="loginForm">
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input id="loginEmail" type="email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input id="loginPassword" type="password" class="form-control" required>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#forgotModal" data-bs-dismiss="modal">Forgot password?</a>
+            <button class="btn btn-success" type="submit">Login</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Signup Modal -->
+<div class="modal fade" id="signupModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Create Account</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="signupForm">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input id="signupName" type="text" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input id="signupEmail" type="email" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input id="signupPassword" type="password" class="form-control" required>
+          </div>
+          <button class="btn btn-success w-100" type="submit">Sign Up</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Forgot Modal -->
+<div class="modal fade" id="forgotModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Forgot Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="forgotForm">
+          <div class="mb-3">
+            <label class="form-label">Enter your email</label>
+            <input id="forgotEmail" type="email" class="form-control" required>
+          </div>
+          <button class="btn btn-success w-100" type="submit">Send Reset Link</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast toast-welcome align-items-center text-bg-success border-0" id="welcomeToast" role="alert" aria-live="assertive" aria-atomic="true">
+  <div class="d-flex">
+    <div class="toast-body">Welcome back!</div>
+    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+</div>
+
+<!-- Floating Cart -->
+<button class="fab-cart" id="fabCart" aria-label="Open cart">🛒 Cart <span class="count" id="cartCount">0</span></button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// Theme toggle and persistence
+const themeBtn = document.getElementById('themeBtn');
+function applyTheme(theme){
+  document.body.setAttribute('data-theme', theme);
+  localStorage.setItem('siteTheme', theme);
+  if(themeBtn) themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+const savedTheme = localStorage.getItem('siteTheme') || 'light';
+applyTheme(savedTheme);
+if(themeBtn) themeBtn.addEventListener('click', ()=> applyTheme(document.body.getAttribute('data-theme')==='dark' ? 'light' : 'dark'));
+
+// Simple local auth using localStorage (demo only)
+function showUserPanel(name){
+  document.getElementById('authButtons').classList.add('d-none');
+  document.getElementById('userPanel').classList.remove('d-none');
+  document.getElementById('welcomeText').textContent = 'Hi, ' + name;
+  const toastEl = document.getElementById('welcomeToast');
+  const toast = new bootstrap.Toast(toastEl);
+  toast.show();
+}
+function hideUserPanel(){
+  document.getElementById('authButtons').classList.remove('d-none');
+  document.getElementById('userPanel').classList.add('d-none');
+  document.getElementById('welcomeText').textContent = '';
+}
+
+// Check session on load
+const session = JSON.parse(localStorage.getItem('pharmaSession') || 'null');
+if(session && session.name){ showUserPanel(session.name); }
+
+// Signup
+const signupForm = document.getElementById('signupForm');
+signupForm?.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const pass = document.getElementById('signupPassword').value;
+  // Save user (overwrites previous) - demo only
+  localStorage.setItem('pharmaUser', JSON.stringify({name,email,pass}));
+  const signupModal = bootstrap.Modal.getInstance(document.getElementById('signupModal'));
+  signupModal.hide();
+  alert('Account created successfully! You can now login.');
+});
+
+// Login
+const loginForm = document.getElementById('loginForm');
+loginForm?.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  const stored = JSON.parse(localStorage.getItem('pharmaUser') || 'null');
+  if(stored && stored.email===email && stored.pass===pass){
+    localStorage.setItem('pharmaSession', JSON.stringify({name:stored.name,email:stored.email}));
+    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+    loginModal.hide();
+    showUserPanel(stored.name);
+  } else {
+    alert('Invalid email or password.');
+  }
+});
+
+// Logout
+const logoutBtn = document.getElementById('logoutBtn');
+logoutBtn?.addEventListener('click', ()=>{
+  localStorage.removeItem('pharmaSession');
+  hideUserPanel();
+  alert('You have been logged out.');
+});
+
+// Forgot password (simulation)
+const forgotForm = document.getElementById('forgotForm');
+forgotForm?.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const email = document.getElementById('forgotEmail').value.trim();
+  const stored = JSON.parse(localStorage.getItem('pharmaUser') || 'null');
+  const forgotModal = bootstrap.Modal.getInstance(document.getElementById('forgotModal'));
+  forgotModal.hide();
+  if(stored && stored.email===email){
+    alert('A password reset link has been (simulated) sent to ' + email);
+  } else {
+    alert('If the email exists, you will receive a reset link (simulation).');
+  }
+});
+
+// Product search & filter
+const searchInput = document.getElementById('productSearch');
+const productItems = Array.from(document.querySelectorAll('.product-item'));
+const filterButtons = document.querySelectorAll('[data-filter]');
+searchInput?.addEventListener('input', ()=> filterProducts());
+filterButtons.forEach(btn=> btn.addEventListener('click', (e)=>{ document.querySelectorAll('[data-filter]').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); filterProducts();}));
+function filterProducts(){
+  const q = (searchInput?.value || '').toLowerCase().trim();
+  const active = document.querySelector('[data-filter].active');
+  const sel = active ? active.getAttribute('data-filter') : 'all';
+  productItems.forEach(item=>{
+    const title = item.querySelector('.card-title').textContent.toLowerCase();
+    const cat = item.getAttribute('data-category');
+    const matchesQuery = !q || title.includes(q);
+    const matchesFilter = sel==='all' || cat===sel;
+    item.style.display = (matchesQuery && matchesFilter) ? '' : 'none';
+  });
+}
+
+// Details modal
+const detailsModalHtml = (title,desc,price)=>{
+  return `
+  <div class="modal fade" id="detailsModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">${title}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="muted">${desc}</p>
+          <p class="mt-3"><strong>Price:</strong> ${price}</p>
+          <div class="d-flex gap-2 mt-3"><button class="btn btn-primary addToCart">Add to Cart</button><button class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+};
+document.addEventListener('click', (e)=>{
+  if(e.target.classList.contains('detailsBtn')){
+    const card = e.target.closest('.product-item');
+    const title = card.querySelector('.card-title').textContent;
+    const desc = card.querySelector('.card-text').textContent;
+    const price = card.querySelector('.badge').textContent;
+    // remove old modal if any
+    document.getElementById('detailsModal')?.remove();
+    document.body.insertAdjacentHTML('beforeend', detailsModalHtml(title,desc,price));
+    const dm = new bootstrap.Modal(document.getElementById('detailsModal'));
+    dm.show();
+  }
+});
+
+// Simple cart simulation
+const cartCountEl = document.getElementById('cartCount');
+let cart = JSON.parse(localStorage.getItem('pharmaCart') || '[]');
+function updateCartCount(){ cartCountEl.textContent = cart.length; localStorage.setItem('pharmaCart', JSON.stringify(cart)); }
+updateCartCount();
+document.addEventListener('click',(e)=>{
+  if(e.target.classList.contains('addToCart')){
+    const card = e.target.closest('.product-item');
+    const title = card.querySelector('.card-title').textContent;
+    const price = card.querySelector('.badge').textContent;
+    cart.push({title,price}); updateCartCount();
+    e.target.innerText = 'Added'; setTimeout(()=> e.target.innerText='Add to Cart',900);
+  }
+});
+
+// Floating animations (intersection observer)
+const floatEls = document.querySelectorAll('.float-up');
+if('IntersectionObserver' in window){
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('in-view'); });
+  },{threshold:0.25});
+  floatEls.forEach(el=> io.observe(el));
+} else { floatEls.forEach(el=> el.classList.add('in-view')); }
+
+// Smooth keyboard focus: ensure skip link works for keyboard users
+document.querySelector('.skip-link')?.addEventListener('click', function(e){
+  const target = document.getElementById('productGrid'); if(target){ target.setAttribute('tabindex','-1'); target.focus(); }
+});
+
+// Accessibility: ensure filter buttons are keyboard accessible (space/enter toggles)
+filterButtons.forEach(btn=>{ btn.tabIndex=0; btn.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') btn.click(); }); });
+
+</script>
+</body>
+</html>
+
